@@ -21,7 +21,6 @@ public class Grade_14 {
 				intNums[i] = intNum;
 			}
 		}
-		
 		for(int i = 0 ; i < 6 ; i++) {
 			System.out.println(intNums[i]);
 		}
