@@ -1,8 +1,10 @@
 package com.biz.student.exec;
 
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 /*
@@ -13,6 +15,7 @@ public class ScoreEx_03 {
 	
 	public static void main(String[] args) {
 		
+		List<String> scoreList = new ArrayList<String>();
 		PrintWriter outPut = null; // = System.out;
 		String outFile = "src/com/biz/student/exec/score.txt";
 		
@@ -39,8 +42,16 @@ public class ScoreEx_03 {
 			// System.out.printf()
 			String score = String.format("%05d:%d:%d:%d:%d:%06.2f",
 					i+1,intKor,intEng,intMath,intSum,floatAvg);
-			outPut.println(score);
+			
+			scoreList.add(score);
+			
+			// outPut.println(score);
 		
+		}
+		
+		Collections.shuffle(scoreList);
+		for(String s : scoreList) {
+			outPut.println(s);
 		}
 		outPut.close();
 		System.out.println("완료!!!");
