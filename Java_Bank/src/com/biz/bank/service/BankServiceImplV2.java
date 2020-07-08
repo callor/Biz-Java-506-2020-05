@@ -1,11 +1,13 @@
 package com.biz.bank.service;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import com.biz.bank.config.Lines;
 import com.biz.bank.domain.AccountVO;
 
 public class BankServiceImplV2 implements BankService {
@@ -58,7 +60,7 @@ public class BankServiceImplV2 implements BankService {
 
 		if (inout.equals("OUTPUT")) {
 			// 잔액계산
-			int balance = 100000;
+			int balance = 0;
 			for (AccountVO accVO : accList) {
 				balance += accVO.getInput();
 				balance -= accVO.getOutput();
@@ -79,7 +81,7 @@ public class BankServiceImplV2 implements BankService {
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss"); // 11:39:00
 
 		String curDate = dateFormat.format(date); // date에 담긴 현재 날짜를 문자열로 변환
-		String curTime = dateFormat.format(date); // date에 담긴 현재 시각을 문자열로 변환
+		String curTime = timeFormat.format(date); // date에 담긴 현재 시각을 문자열로 변환
 
 		AccountVO accVO = new AccountVO();
 
@@ -109,23 +111,42 @@ public class BankServiceImplV2 implements BankService {
 	@Override
 	public void listBalance() {
 
-		System.out.println("====================================================");
+		// 숫자를 회계방식 문자열로 표현하기 위한 클래스 도구
+		// 100,000,000
+		DecimalFormat df = new DecimalFormat("##,###");
+		String[] listTitle = {"거래일자","입금액","출금액","잔액"};
+		
+		System.out.println(Lines.dLine);
 		System.out.println("001 계좌 입출금 내역서");
-		System.out.println("====================================================");
-		System.out.println("거래일자\t\t입금액\t출금액\t잔액");
-		System.out.println("----------------------------------------------------");
+		System.out.println(Lines.dLine);
+		
+		// %20s : 문자열을 표현하기위해 20개의 칸을 만들고
+		// 		문자열을 채운후 나머지는 빈칸으로 남겨두어라
+		//		문자열은 20개 칸에서 오른쪽으로 정렬하라
+		// %-20s : 위와 같인 왼쪽으로 정렬하라.
+		System.out.printf("%-15s\t|%17s\t|%17s\t|%17s\t|\n",
+				listTitle[0],
+				listTitle[1],
+				listTitle[2],
+				listTitle[3]);
+		
+		System.out.println(Lines.sLine);
 
-		int balance = 1000_000;
+		int balance = 0;
+		String strNumber = "";
+		
 		for (AccountVO accVO : accList) {
-			System.out.print(accVO.getDate() + "\t");
-			System.out.print(accVO.getInput() + "\t");
-			System.out.print(accVO.getOutput() + "\t");
+			System.out.printf("%-20s\t|",accVO.getDate());
+						
+			System.out.printf( "%20s\t|",df.format(accVO.getInput())  );
+			System.out.printf( "%20s\t|", df.format(accVO.getOutput())  );
 
 			balance += accVO.getInput();
 			balance -= accVO.getOutput();
-			System.out.println(balance);
+			
+			System.out.printf("%20s\t|\n", df.format(balance));
 		}
-		System.out.println("====================================================");
+		System.out.println(Lines.dLine);
 		System.out.println("출력 완료!! 아무키나 누르세요......");
 		scan.nextLine();
 	}

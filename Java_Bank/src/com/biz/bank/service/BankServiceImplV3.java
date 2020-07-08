@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
 
 import com.biz.bank.config.Posion;
 import com.biz.bank.domain.AccountVO;
@@ -22,18 +24,22 @@ public class BankServiceImplV3 extends BankServiceImplV2 {
 	// V2를 상속받아서 bankList() 만 이어받아 사용한다.
 	// input(), output() 메서드는 별도로 구현을 하자
 
+	String bFileName = "";
+	
 	public BankServiceImplV3() {
+		bFileName = "src/com/biz/bank/exec/data/balance.txt";
 		this.loadBalance();
 	}
 
-	private void loadBalance() {
-		String bFile = "src/com/biz/bank/exec/data/balance.txt";
-
+	protected void loadBalance() {
+		
+		accList = new ArrayList<AccountVO>();
+		
 		FileReader fileReader = null;
 		BufferedReader buffer = null;
 
 		try {
-			fileReader = new FileReader(bFile);
+			fileReader = new FileReader(bFileName);
 			buffer = new BufferedReader(fileReader);
 
 			String reader = "";
@@ -51,9 +57,13 @@ public class BankServiceImplV3 extends BankServiceImplV2 {
 				accVO.setOutput(Integer.valueOf(balances[Posion.ACC_OUTPUT]));
 				accList.add(accVO);
 			}
+			buffer.close();
+			fileReader.close();
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// e.printStackTrace();
+			System.out.println("계좌가 없으므로 새로운 계좌를 개설합니다");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,12 +72,48 @@ public class BankServiceImplV3 extends BankServiceImplV2 {
 
 	@Override
 	public boolean inputBalance() {
+		this.keyInput("INPUT");
+		this.saveBalance();
 		return true;
 	}
 
 	@Override
 	public boolean outputBalance() {
+		this.keyInput("OUTPUT");
+		this.saveBalance();
 		return true;
 	}
+	
+	protected void saveBalance() {
+		
+		PrintStream outPut = null;
+		try {
+			outPut = new PrintStream(bFileName);
+			
+			int balance = 0 ;
+			for(AccountVO accVO : accList) {
+				
+				balance += accVO.getInput();
+				balance -= accVO.getOutput();
+				
+				// 거래일자, 입금, 출금 잔액
+				outPut.printf("%s,%d,%d,%d\n", 
+						accVO.getDate(),
+						accVO.getInput(),
+						accVO.getOutput(),balance);
+			}
+			outPut.close();
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+	}
+	
+	
 
 }
