@@ -32,8 +32,13 @@ public class BankServiceImplV3 extends BankServiceImplV2 {
 	}
 
 	protected void loadBalance() {
-		
-		accList = new ArrayList<AccountVO>();
+
+		// 새로운 계좌번호를 선택했을때 
+		// 새로운 balance정보를 가져오기 위해서
+		// 기존의 accList를 모두 제거하기
+		// 기존 List를 제거하지 않으면 계좌를 선택할때마다
+		// 리스트가 추가되어 나타나게된다.
+		accList.clear();
 		
 		FileReader fileReader = null;
 		BufferedReader buffer = null;
