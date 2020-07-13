@@ -20,11 +20,14 @@ public class ScoreServiceImplV1 implements ScoreService {
 
 	public ScoreServiceImplV1() {
 		scoreList = new ArrayList<ScoreVO>();
-		studentList = new ArrayList<StudentVO>();
+		// studentList = new ArrayList<StudentVO>();
+		StudentService stService = new StudentServiceImplV5();
+		studentList = stService.getStudentList();
 	}
 
 	@Override
 	public void inputStudent() {
+		/*
 		String studentFile = "src/com/biz/student/exec/student.txt";
 		try {
 
@@ -55,6 +58,7 @@ public class ScoreServiceImplV1 implements ScoreService {
 		} catch (IOException e) {
 			System.out.println("버퍼로 부터 데이터를 읽는데 문제가 발생!!");
 		} // try : 파일 읽기 end
+		*/
 	}
 
 	@Override
@@ -135,12 +139,18 @@ public class ScoreServiceImplV1 implements ScoreService {
 			
 			// 이름
 			// score의 학번으로 studentList에서 찾기
+			boolean stdCheck = false;
 			for(StudentVO stVO : studentList) {
 				// 학번이 같은 학생의 정보를 찾았으면
 				if(sVO.getNum().equals(stVO.getNum())) {
 					System.out.print(stVO.getName() + "\t");
+					stdCheck = true;
 					break;
 				}
+			}
+			// stdCheck == true : 학생을 찾았음, false : 학생없음
+			if(!stdCheck) {
+				System.out.print("[없음]" + "\t");
 			}
 			
 			System.out.print(sVO.getKor() + "\t");
